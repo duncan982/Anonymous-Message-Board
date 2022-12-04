@@ -1,3 +1,5 @@
+// const { Connection } = require("./Connection.js");
+// Connection.open();
 const MongoClient = require("mongodb").MongoClient,
   ObjectId = require("mongodb").ObjectID,
   mongoUri = process.env.MONGO_URI,
@@ -32,11 +34,22 @@ async function createReply(req, response) {
 
   await MongoClient.connect(mongoUri, flagObj, (error, db) => {
     if (error) throw error;
+    // const dbo = Connection.db(database);
     const dbo = db.db(database);
+    // Connection.collection(board).updateOne(select, newReply, (error, result) => {
     dbo.collection(board).updateOne(select, newReply, (error, result) => {
-      if (error) throw error;
-      response.redirect(`/b/${board}/${thread_id}`);
-      db.close();
+      // if (error) throw error;
+      // response.redirect(`/b/${board}/${thread_id}`);
+      // // db.close();
+
+      if (result) {
+        response.redirect(`/b/${board}/${thread_id}`);
+        // db.close();
+      } else {
+        console.log("error:", error);
+        response.redirect(`/`);
+        // throw error;
+      }
     });
   });
 }
@@ -71,7 +84,7 @@ async function reportReply(req, response) {
       } else if (result.matchedCount) {
         response.send(`This reply already reported: ${reply_id}`);
       } else response.send("Reply not found.");
-      db.close();
+      // db.close();
     });
   });
 }
@@ -105,13 +118,20 @@ async function deleteReply(req, response) {
         "replies.$.text": "[deleted]",
       },
     };
-    console.log(req.body);
+    // console.log(req.body);
     dbo.collection(board).updateOne(select, modify, (error, result) => {
-      if (error) throw error;
-      if (result.matchedCount && result.modifiedCount) {
+      // console.log("result:", result);
+      // if (error) throw error;
+      // if (result.matchedCount && result.modifiedCount) {
+      //   response.send("success");
+      // } else response.send("incorrect password");
+      // // db.close();
+      if (error) {
+        console.log("error:", error);
+        response.send("incorrect password");
+      } else {
         response.send("success");
-      } else response.send("incorrect password");
-      db.close();
+      }
     });
   });
 }
@@ -142,7 +162,7 @@ async function showAllReplies(req, response) {
         });
         response.json(result);
       } else response.send(`${thread_id} ID not found`);
-      db.close();
+      // db.close();
     });
   });
 }

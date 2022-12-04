@@ -9,6 +9,7 @@ const MongoClient = require("mongodb").MongoClient,
 const generalFunctions = require("./generalFunctions.js");
 const checkId = generalFunctions.checkId;
 const stampToJSON = generalFunctions.stampToJSON;
+
 async function createThread(req, res) {
   const board = req.params.board;
   const thread = {
@@ -25,7 +26,7 @@ async function createThread(req, res) {
     dbo.collection(board).insertOne(thread, (error, result) => {
       if (error) throw error;
       res.redirect(`/b/${board}/`);
-      db.close();
+      // db.close();
     });
   });
 }
@@ -67,7 +68,7 @@ async function listThread(req, res) {
           documents.bumped_on = stampToJSON(documents.bumped_on);
         });
         res.json(result);
-        db.close();
+        // db.close();
       });
   });
 }
@@ -98,7 +99,7 @@ async function reportThread(req, response) {
       }
       return response.send(`could not update: invalid id: ${thread_id}`);
     });
-    db.close();
+    // db.close();
   });
 }
 
@@ -120,7 +121,7 @@ async function deleteThread(req, response) {
       if (result.value) return response.send(`success`);
       response.send(`incorrect password`);
     });
-    db.close();
+    // db.close();
   });
 }
 
