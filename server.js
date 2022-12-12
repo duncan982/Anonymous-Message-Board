@@ -12,6 +12,7 @@ var runner = require("./test-runner");
 var app = express();
 
 const helmet = require("helmet");
+const MongoClient = require("mongodb/lib/mongo_client");
 
 app.use(
   helmet({
@@ -46,6 +47,21 @@ app.route("/b/:board/:threadid").get(function (req, res) {
 app.route("/").get(function (req, res) {
   res.sendFile(process.cwd() + "/views/index.html");
 });
+
+// MongoClient.connect(process.env.MONGO_URI, {
+//   useUnifiedTopology: true,
+//   useNewUrlParser: true,
+// })
+//   .then((client) => {
+//     const db = client.db("message-board");
+//     const collection = db.collection("board_threads");
+//     app.locals.db = db;
+//     console.log("MongoDB is now connected");
+//     console.log("the current database is: " + db.s.databaseName);
+//   })
+//   .catch((error) => {
+//     console.log("MongoDB is not connected", error);
+//   });
 
 //For FCC testing purposes
 fccTestingRoutes(app);

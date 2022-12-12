@@ -1,0 +1,4 @@
+check github repos but stick to fcc solution format
+check github repos but modify fcc solution format
+change calling of databse to how it is used in mongoDB tutorial (see bookmarked page)
+run the interesting github repos one by one until you find one that is passing, but rewwrite first

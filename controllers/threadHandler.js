@@ -14,8 +14,8 @@ async function createThread(req, res) {
   const board = req.params.board;
   const thread = {
     text: req.body.text,
-    created_on: Date.now(),
-    bumped_on: Date.now(),
+    created_on: new Date(),
+    bumped_on: new Date(),
     reported: false,
     delete_password: req.body.delete_password,
     replies: [],

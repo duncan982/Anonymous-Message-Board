@@ -36,21 +36,44 @@ async function createReply(req, response) {
     if (error) throw error;
     // const dbo = Connection.db(database);
     const dbo = db.db(database);
-    // Connection.collection(board).updateOne(select, newReply, (error, result) => {
-    dbo.collection(board).updateOne(select, newReply, (error, result) => {
-      // if (error) throw error;
-      // response.redirect(`/b/${board}/${thread_id}`);
-      // // db.close();
+    // // Connection.collection(board).updateOne(select, newReply, (error, result) => {
+    // dbo.collection(board).updateOne(select, newReply, (error, result) => {
+    //   // if (error) throw error;
+    //   // response.redirect(`/b/${board}/${thread_id}`);
+    //   // // db.close();
 
-      if (result) {
-        response.redirect(`/b/${board}/${thread_id}`);
-        // db.close();
-      } else {
-        console.log("error:", error);
-        response.redirect(`/`);
-        // throw error;
-      }
-    });
+    //   if (result) {
+    //     response.redirect(`/b/${board}/${thread_id}`);
+    //     // db.close();
+    //   } else {
+    //     console.log("error:", error);
+    //     response.redirect(`/`);
+    //     // throw error;
+    //   }
+    // });
+
+    var updatedmessagesarray = {
+      text: req.body.text,
+      created_on: new Date(),
+      delete_password: req.body.delete_password,
+      reported: false,
+    };
+    var newvalues = {
+      $addToSet: { replies: updatedmessagesarray },
+      $set: { bumped_on: new Date() },
+    };
+
+    dbo
+      .collection(board)
+      .updateOne(
+        { _id: ObjectId(thread_id) },
+        newvalues,
+        function (error, res) {
+          if (error) throw error;
+        }
+      );
+
+    response.redirect("/b/" + board + "/" + thread_id);
   });
 }
 
@@ -79,13 +102,27 @@ async function reportReply(req, response) {
     };
     dbo.collection(board).updateOne(select, modify, (error, result) => {
       if (error) throw error;
-      if (result.matchedCount && result.modifiedCount) {
-        response.send("reported");
-      } else if (result.matchedCount) {
-        response.send(`This reply already reported: ${reply_id}`);
-      } else response.send("Reply not found.");
+      // if (result.matchedCount && result.modifiedCount) {
+      response.send("reported");
+      // } else if (result.matchedCount) {
+      //   response.send(`This reply already reported: ${reply_id}`);
+      // } else response.send("Reply not found.");
       // db.close();
     });
+
+    // var newvalues = { $set: { "replies.$.reported": true } };
+
+    // dbo.collection(board).updateOne(
+    //   {
+    //     _id: ObjectId(thread_id),
+    //     replies: { $elemMatch: { _id: ObjectId(reply_id) } },
+    //   },
+    //   newvalues,
+    //   function (err, res) {
+    //     if (err) throw err;
+    //     response.send("reported");
+    //   }
+    // );
   });
 }
 
