@@ -17,43 +17,12 @@ async function createReply(req, response) {
   const thread_id = req.body.thread_id;
   const error = checkId(thread_id);
   if (error) return response.send(error);
-  const select = {
-    _id: new ObjectId(req.body.thread_id),
-  };
-  const newReply = {
-    $push: {
-      replies: {
-        _id: new ObjectId(),
-        text: req.body.text,
-        created_on: Date.now(),
-        reported: false,
-        delete_password: req.body.delete_password,
-      },
-    },
-  };
 
   await MongoClient.connect(mongoUri, flagObj, (error, db) => {
     if (error) throw error;
-    // const dbo = Connection.db(database);
     const dbo = db.db(database);
-    // Connection.collection(board).updateOne(select, newReply, (error, result) => {
-    // dbo.collection(board).updateOne(select, newReply, (error, result) => {
-    //   // if (error) throw error;
-    //   // response.redirect(`/b/${board}/${thread_id}`);
-    //   // // db.close();
-
-    //   if (result) {
-    //     response.redirect(`/b/${board}/${thread_id}`);
-    //     // db.close();
-    //   } else {
-    //     console.log("error:", error);
-    //     response.redirect(`/`);
-    //     // throw error;
-    //   }
-    // });
-
     var updatedmessagesarray = {
-      // _id: _id,
+      _id: new ObjectId(),
       text: req.body.text,
       created_on: new Date(),
       delete_password: req.body.delete_password,
@@ -79,6 +48,7 @@ async function createReply(req, response) {
 }
 
 async function reportReply(req, response) {
+  console.log("req.body:", req.body);
   const board = req.params.board;
   const thread_id = req.body.thread_id;
   const reply_id = req.body.reply_id;

@@ -153,10 +153,11 @@ suite("Functional Tests", function () {
       test("report reply", (done) => {
         chai
           .request(server)
-          .put("/api/threads/fcc")
+          .put("/api/replies/fcc")
           .send({ thread_id: testId2, reply_id: testId2 })
           .end((err, res) => {
-            // console.log("res.text:", res.text);
+            console.log("/**report reply response*/");
+            console.log("res.text:", res.text);
             assert.equal(res.status, 200);
             assert.equal(res.text, "reported");
             done();
@@ -168,13 +169,15 @@ suite("Functional Tests", function () {
       test("delete reply with bad password", (done) => {
         chai
           .request(server)
-          .delete("/api/threads/fcc")
+          .delete("/api/replies/fcc")
           .send({
             thread_id: testId2,
             reply_id: testId3,
             delete_password: "wrong",
           })
           .end((err, res) => {
+            console.log("/**delete reply with wrong passowrd response*/");
+            console.log("res.text:", res.text);
             assert.equal(res.status, 200);
             assert.equal(res.text, "incorrect password");
             done();
@@ -184,13 +187,15 @@ suite("Functional Tests", function () {
       test("delete reply with valid password", (done) => {
         chai
           .request(server)
-          .delete("/api/threads/fcc")
+          .delete("/api/replies/fcc")
           .send({
             thread_id: testId2,
             reply_id: testId3,
             delete_password: "pass",
           })
           .end((err, res) => {
+            console.log("/**delete reply with right passowrd response*/");
+            console.log("res.text:", res.text);
             assert.equal(res.status, 200);
             assert.equal(res.text, "success");
             done();

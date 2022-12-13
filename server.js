@@ -14,23 +14,51 @@ var app = express();
 const helmet = require("helmet");
 const MongoClient = require("mongodb/lib/mongo_client");
 
+// app.use(
+//   helmet({
+//     frameguard: {
+//       action: "sameorigin",
+//     },
+//     dnsPrefetchControl: {
+//       allow: false,
+//     },
+//     referrerPolicy: {
+//       policy: "same-origin",
+//     },
+//   })
+// );
+
+// app.use(helmet.frameguard({ action: "sameorigin" }));
+// app.use(helmet.dnsPrefetchControl());
+// app.use(helmet.referrerPolicy({ policy: "same-origin" }));
+
+/** prevent various malicius attacks*/
 app.use(
   helmet({
-    frameguard: {
-      action: "sameorigin",
-    },
-    dnsPrefetchControl: {
-      allow: false,
-    },
-    referrerPolicy: {
-      policy: "same-origin",
-    },
+    referrerPolicy: { policy: "same-origin" },
   })
 );
 
+/** customise default helmet contentSecurityPolicy settings*/
+app.use(
+  helmet.contentSecurityPolicy({
+    useDefaults: false,
+    directives: {
+      defaultSrc: ["https://swodts-3000.preview.csb.app/"],
+      scriptSrc: ["'self'", "https://swodts-3000.preview.csb.app/"],
+      styleSrc: ["'self'", "https://swodts-3000.preview.csb.app/"],
+      connectSrc: ["'self'", "https://swodts-3000.preview.csb.app/"],
+    },
+  })
+);
 app.use("/public", express.static(process.cwd() + "/public"));
 
+// const options = {
+//   origin: ["*freecodecamp.org*", "https://swodts-3000.preview.csb.app/"],
+// };
+// app.use(cors(options));
 app.use(cors({ origin: "*" })); //For FCC testing purposes only
+// app.use(cors({ origin: "*freecodecamp.org*" })); //For FCC testing purposes only
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
