@@ -48,7 +48,6 @@ async function createReply(req, response) {
 }
 
 async function reportReply(req, response) {
-  console.log("req.body:", req.body);
   const board = req.params.board;
   const thread_id = req.body.thread_id;
   const reply_id = req.body.reply_id;
@@ -78,24 +77,7 @@ async function reportReply(req, response) {
       } else if (result.matchedCount) {
         response.send(`This reply already reported: ${reply_id}`);
       } else response.send("Reply not found.");
-      // db.close();
     });
-
-    // var newvalues = { $set: { "replies.$.reported": true } };
-
-    // dbo
-    //   .collection("messages")
-    //   .updateOne(
-    //     {
-    //       _id: ObjectId(thread_id),
-    //       replies: { $elemMatch: { _id: ObjectId(reply_id) } },
-    //     },
-    //     newvalues,
-    //     function (err, r2) {
-    //       if (err) throw err;
-    //       res.send("success");
-    //     }
-    //   );
   });
 }
 

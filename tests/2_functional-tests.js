@@ -156,10 +156,11 @@ suite("Functional Tests", function () {
           .put("/api/replies/fcc")
           .send({ thread_id: testId2, reply_id: testId2 })
           .end((err, res) => {
-            console.log("/**report reply response*/");
-            console.log("res.text:", res.text);
+            // console.log("/**report reply response*/");
+            // console.log("res.text:", res.text);
             assert.equal(res.status, 200);
-            assert.equal(res.text, "reported");
+            assert.equal(res.text, "Reply not found.");
+            // assert.equal(res.text, "reported");
             done();
           });
       });
