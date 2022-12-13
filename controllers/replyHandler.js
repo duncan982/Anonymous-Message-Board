@@ -86,45 +86,81 @@ async function deleteReply(req, response) {
   const thread_id = req.body.thread_id;
   const reply_id = req.body.reply_id;
   const delete_password = req.body.delete_password;
-  const threadError = checkId(thread_id);
-  const replyError = checkId(reply_id);
-  let error = "";
-  if (!board) error += "board requierd ";
-  if (threadError) error += ` thread_id error: ${threadError} `;
-  if (replyError) error += ` reply_id error: ${replyError} `;
-  if (error) return response.send(error);
+  // const threadError = checkId(thread_id);
+  // const replyError = checkId(reply_id);
+  // let error = "";
+  // if (!board) error += "board requierd ";
+  // if (threadError) error += ` thread_id error: ${threadError} `;
+  // if (replyError) error += ` reply_id error: ${replyError} `;
+  // if (error) return response.send(error);
   await MongoClient.connect(mongoUri, flagObj, (error, db) => {
     if (error) throw error;
     const dbo = db.db(database);
-    const select = {
-      _id: new ObjectId(thread_id),
-      replies: {
-        $elemMatch: {
-          _id: new ObjectId(reply_id),
-          delete_password: delete_password,
+    // const select = {
+    //   _id: new ObjectId(thread_id),
+    //   replies: {
+    //     $elemMatch: {
+    //       _id: new ObjectId(reply_id),
+    //       delete_password: delete_password,
+    //     },
+    //   },
+    // };
+    // const modify = {
+    //   $set: {
+    //     "replies.$.text": "[deleted]",
+    //   },
+    // };
+    // // console.log(req.body);
+    // dbo.collection(board).updateOne(select, modify, (error, result) => {
+    //   // console.log("result:", result);
+    //   // if (error) throw error;
+    //   // if (result.matchedCount && result.modifiedCount) {
+    //   //   response.send("success");
+    //   // } else response.send("incorrect password");
+    //   // // db.close();
+    //   if (error) {
+    //     console.log("error:", error);
+    //     response.send("incorrect password");
+    //   } else {
+    //     response.send("success");
+    //   }
+    // });
+
+    var newvalues = { $set: { "replies.$.text": "[deleted]" } };
+
+    dbo.collection(board).findOne(
+      {
+        _id: ObjectId(thread_id),
+        replies: {
+          $elemMatch: {
+            _id: ObjectId(reply_id),
+            delete_password: delete_password,
+          },
         },
       },
-    };
-    const modify = {
-      $set: {
-        "replies.$.text": "[deleted]",
-      },
-    };
-    // console.log(req.body);
-    dbo.collection(board).updateOne(select, modify, (error, result) => {
-      // console.log("result:", result);
-      // if (error) throw error;
-      // if (result.matchedCount && result.modifiedCount) {
-      //   response.send("success");
-      // } else response.send("incorrect password");
-      // // db.close();
-      if (error) {
-        console.log("error:", error);
-        response.send("incorrect password");
-      } else {
-        response.send("success");
+      function (err, r) {
+        if (r == null || r == "") {
+          response.send("incorrect password");
+        } else {
+          dbo.collection(board).updateOne(
+            {
+              _id: ObjectId(thread_id),
+              replies: {
+                $elemMatch: {
+                  _id: ObjectId(reply_id),
+                  delete_password: delete_password,
+                },
+              },
+            },
+            newvalues,
+            function (err, r2) {
+              if (err) throw err;
+            }
+          );
+          response.send("success");
+        }
       }
-    });
+    );
   });
 }
 

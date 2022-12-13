@@ -46,6 +46,7 @@ suite("Functional Tests", function () {
           .request(server)
           .get("/api/threads/fcc")
           .end((err, res) => {
+            // console.log("res.body:", res.body);
             assert.equal(res.status, 200);
             assert.isArray(res.body);
             assert.isBelow(res.body.length, 11);
@@ -59,7 +60,8 @@ suite("Functional Tests", function () {
             assert.isArray(res.body[0].replies);
             assert.isBelow(res.body[0].replies.length, 4);
             testId = res.body[0]._id;
-            testId2 = res.body[1]._id;
+            testId2 = res.body[2]._id;
+            testId3 = res.body[2].replies[0]._id;
             done();
           });
       });
@@ -177,10 +179,12 @@ suite("Functional Tests", function () {
             delete_password: "wrong",
           })
           .end((err, res) => {
-            console.log("/**delete reply with wrong passowrd response*/");
-            console.log("res.text:", res.text);
+            // console.log("/**delete reply with wrong passowrd response*/");
+            // console.log("res.text:", res.text);
             assert.equal(res.status, 200);
             assert.equal(res.text, "incorrect password");
+            // assert.equal(res.text, "incorrect password");
+
             done();
           });
       });
@@ -195,8 +199,8 @@ suite("Functional Tests", function () {
             delete_password: "pass",
           })
           .end((err, res) => {
-            console.log("/**delete reply with right passowrd response*/");
-            console.log("res.text:", res.text);
+            // console.log("/**delete reply with right passowrd response*/");
+            // console.log("res.text:", res.text);
             assert.equal(res.status, 200);
             assert.equal(res.text, "success");
             done();
