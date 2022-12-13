@@ -114,6 +114,7 @@ suite("Functional Tests", function () {
           .post("/api/replies/fcc")
           .send({
             thread_id: testId2,
+            reply_id: testId2,
             text: "a reply" + testText,
             delete_password: "pass",
           })
@@ -155,7 +156,7 @@ suite("Functional Tests", function () {
           .put("/api/threads/fcc")
           .send({ thread_id: testId2, reply_id: testId2 })
           .end((err, res) => {
-            console.log("res.text:", res.text);
+            // console.log("res.text:", res.text);
             assert.equal(res.status, 200);
             assert.equal(res.text, "reported");
             done();
