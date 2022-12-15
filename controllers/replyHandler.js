@@ -1,5 +1,3 @@
-// const { Connection } = require("./Connection.js");
-// Connection.open();
 const MongoClient = require("mongodb").MongoClient,
   ObjectId = require("mongodb").ObjectID,
   mongoUri = process.env.MONGO_URI,
@@ -106,14 +104,8 @@ async function deleteReply(req, response) {
           { returnDocument: "after" }
         )
         .then((result) => {
-          // console.log("result:", result);
           if (result.value) {
-            // console.log("check 1:", result.value.replies);
-            if ((result.value.replies[0].text = "[deleted]")) {
-              // console.log("check 2:", result.value.replies);
-              response.send("success");
-            }
-            // response.send("success");
+            response.send("success");
           } else {
             response.send("incorrect password");
           }
